@@ -13,4 +13,8 @@ export class Room {
   })
   isInviteOnly: boolean;
 
+  @Column({
+    nullable: true,
+  })
+  imageUrl: string;
 }
