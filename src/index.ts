@@ -18,7 +18,7 @@ AppDataSource.initialize()
 // setup websocket server
     const io = require("socket.io")(server, {
       cors: {
-        origin: "",
+        origin: "*",
         methods: ["GET", "POST"],
       },
     });
