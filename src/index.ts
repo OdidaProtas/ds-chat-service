@@ -25,14 +25,14 @@ AppDataSource.initialize()
       },
     });
 
-    // io.use(async (socket, next) => {
-    //   try {
-    //     // const user = await fetchUser(soc/ket);
-    //     socket.user = socket?.auth?.id;
-    //   } catch (e) {
-    //     next(new Error("unknown user"));
-    //   }
-    // });
+    io.use(async (socket, next) => {
+      try {
+        const user = await fetchUser(socket);
+        socket.user = user
+      } catch (e) {
+        next(new Error("unknown user"));
+      }
+    });
 
     io.on("connection", handleSocketConnection);
 
