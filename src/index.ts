@@ -5,8 +5,9 @@ import { AppDataSource } from "./data-source";
 import { Routes } from "./routes";
 import "dotenv/config";
 import * as cors from "cors";
-import { handleSocketConnection } from "./controller/SocketController";
+import { SocketController } from "./controller/SocketController";
 import fetchUser from "./util/fetchUser";
+import { socket } from "./middleware";
 
 AppDataSource.initialize()
   .then(async () => {
@@ -25,16 +26,10 @@ AppDataSource.initialize()
       },
     });
 
-    io.use(async (socket, next) => {
-      try {
-        const user = await fetchUser(socket);
-        socket.user = user
-      } catch (e) {
-        next(new Error("unknown user"));
-      }
-    });
+    // io.use(socket.middlewares.user.userDetail);
 
-    io.on("connection", handleSocketConnection);
+    io.on("connection", SocketController.handleConnection);
+    io.on("pong", SocketController.handlePing);
 
     app.use((request: Request, response: Response, next: NextFunction) => {
       request["socket"] = io;
