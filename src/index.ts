@@ -5,6 +5,8 @@ import { AppDataSource } from "./data-source";
 import { Routes } from "./routes";
 import "dotenv/config";
 import * as cors from "cors";
+import { handleSocketConnection } from "./controller/SocketController";
+import fetchUser from "./util/fetchUser";
 
 AppDataSource.initialize()
   .then(async () => {
@@ -15,13 +17,24 @@ AppDataSource.initialize()
 
     const http = require("http");
     const server = http.createServer(app);
-// setup websocket server
+    // setup websocket server
     const io = require("socket.io")(server, {
       cors: {
         origin: "*",
         methods: ["GET", "POST"],
       },
     });
+
+    io.use(async (socket, next) => {
+      try {
+        const user = await fetchUser(socket);
+        socket.user = user;
+      } catch (e) {
+        next(new Error("unknown user"));
+      }
+    });
+
+    io.on("connection", handleSocketConnection);
 
     app.use((request: Request, response: Response, next: NextFunction) => {
       request["socket"] = io;

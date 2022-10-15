@@ -2,7 +2,6 @@ import "reflect-metadata"
 import { DataSource } from "typeorm"
 import 'dotenv/config'
 
-console.log(`\n\n\n\n\n`,process.env.DREAMER_CODES_AUTH_DATABASE_HOST)
 
 export const AppDataSource = new DataSource({
     type: "postgres",
